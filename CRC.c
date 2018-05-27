@@ -26,18 +26,18 @@
 
 #if (REFLECT_DATA == TRUE)
 #undef  REFLECT_DATA
-#define REFLECT_DATA(X)			((unsigned char) reflect((X), 8))
+#define REFLECT_DATA(X)   ((unsigned char) reflect((X), 8))
 #else
 #undef  REFLECT_DATA
-#define REFLECT_DATA(X)			(X)
+#define REFLECT_DATA(X)   (X)
 #endif
 
 #if (REFLECT_REMAINDER == TRUE)
 #undef  REFLECT_REMAINDER
-#define REFLECT_REMAINDER(X)	((crc) reflect((X), WIDTH))
+#define REFLECT_REMAINDER(X) ((crc) reflect((X), WIDTH))
 #else
 #undef  REFLECT_REMAINDER
-#define REFLECT_REMAINDER(X)	(X)
+#define REFLECT_REMAINDER(X) (X)
 #endif
 
 /*********************************************************************
@@ -193,6 +193,9 @@ crc
 crcFast(unsigned char const message[], int nBytes) {
     crc remainder = INITIAL_REMAINDER;
     unsigned char data;
+    unsigned char data_fp;
+    unsigned char data_sp;
+    int tst = 24;
     int byte;
 
 
@@ -200,7 +203,10 @@ crcFast(unsigned char const message[], int nBytes) {
      * Divide the message by the polynomial, a byte at a time.
      */
     for (byte = 0; byte < nBytes; ++byte) {
-        data = REFLECT_DATA(message[byte]) ^ (remainder >> (WIDTH - 8));
+        data_fp = REFLECT_DATA(message[byte]);
+        data_sp = (remainder >> (tst));
+        data = data_fp ^ data_sp;
+        //data = REFLECT_DATA(message[byte]) ^ (remainder >> (WIDTH - 8));
         remainder = crcTable[data] ^ (remainder << 8);
     }
 
@@ -210,4 +216,3 @@ crcFast(unsigned char const message[], int nBytes) {
     return (REFLECT_REMAINDER(remainder) ^ FINAL_XOR_VALUE);
 
 } /* crcFast() */
-
