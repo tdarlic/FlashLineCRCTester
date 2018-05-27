@@ -192,10 +192,7 @@ crcInit(void) {
 crc
 crcFast(unsigned char const message[], int nBytes) {
     crc remainder = INITIAL_REMAINDER;
-    unsigned char data;
-    unsigned char data_fp;
-    unsigned char data_sp;
-    int tst = 24;
+    unsigned char data;    
     int byte;
 
 
@@ -203,10 +200,7 @@ crcFast(unsigned char const message[], int nBytes) {
      * Divide the message by the polynomial, a byte at a time.
      */
     for (byte = 0; byte < nBytes; ++byte) {
-        data_fp = REFLECT_DATA(message[byte]);
-        data_sp = (remainder >> (tst));
-        data = data_fp ^ data_sp;
-        //data = REFLECT_DATA(message[byte]) ^ (remainder >> (WIDTH - 8));
+        data = REFLECT_DATA(message[byte]) ^ (remainder >> (WIDTH - 8));
         remainder = crcTable[data] ^ (remainder << 8);
     }
 
